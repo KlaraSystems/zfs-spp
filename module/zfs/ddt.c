@@ -771,7 +771,7 @@ ddt_loadall(ddt_t *ddt)
 }
 
 ddt_entry_t *
-ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
+ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add, boolean_t *addedp)
 {
 	ddt_entry_t *dde, dde_search;
 	enum ddt_type type;
@@ -789,6 +789,8 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 			return (NULL);
 		dde = ddt_alloc(&dde_search.dde_key);
 		avl_insert(&ddt->ddt_tree, dde, where);
+		if (addedp)
+			*addedp = B_TRUE;
 	}
 
 	while (dde->dde_loading)
@@ -928,6 +930,7 @@ int
 ddt_load(spa_t *spa)
 {
 	int error;
+	ddt_object_t ddo_total = { 0 };
 
 	ddt_create(spa);
 
@@ -956,6 +959,11 @@ ddt_load(spa_t *spa)
 		    sizeof (ddt->ddt_histogram));
 		spa->spa_dedup_dspace = ~0ULL;
 	}
+
+	ddt_get_dedup_object_stats(spa, &ddo_total);
+	spa->spa_dedup_size = ddo_total.ddo_dspace * ddo_total.ddo_count;
+	if (ddo_total.ddo_dspace > 0)
+		spa->spa_dedup_entry_size = ddo_total.ddo_dspace;
 
 	return (0);
 }
@@ -1338,6 +1346,7 @@ ddt_sync(spa_t *spa, uint64_t txg)
 	dsl_scan_t *scn = spa->spa_dsl_pool->dp_scan;
 	dmu_tx_t *tx;
 	zio_t *rio;
+	ddt_object_t ddo_total = { 0 };
 
 	ASSERT(spa_syncing_txg(spa) == txg);
 
@@ -1354,6 +1363,11 @@ ddt_sync(spa_t *spa, uint64_t txg)
 	 */
 	ASSERT3P(scn->scn_zio_root, ==, NULL);
 	scn->scn_zio_root = rio;
+
+	ddt_get_dedup_object_stats(spa, &ddo_total);
+	spa->spa_dedup_size = ddo_total.ddo_dspace * ddo_total.ddo_count;
+	if (ddo_total.ddo_dspace > spa->spa_dedup_entry_size)
+		spa->spa_dedup_entry_size = ddo_total.ddo_dspace;
 
 	for (enum zio_checksum c = 0; c < ZIO_CHECKSUM_FUNCTIONS; c++) {
 		ddt_t *ddt = spa->spa_ddt[c];
