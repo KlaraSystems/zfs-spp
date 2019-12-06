@@ -409,6 +409,10 @@ struct spa {
 	uint64_t	spa_leaf_list_gen;	/* track leaf_list changes */
 	uint32_t	spa_hostid;		/* cached system hostid */
 
+	uint64_t	spa_dedup_limit;	/* Target maximum size of DDT */
+	uint64_t	spa_dedup_size;		/* Current size of DDT */
+	uint64_t	spa_dedup_entry_size;	/* Average size of DDT entry */
+
 	/*
 	 * spa_refcount & spa_config_lock must be the last elements
 	 * because zfs_refcount_t changes size based on compilation options.
