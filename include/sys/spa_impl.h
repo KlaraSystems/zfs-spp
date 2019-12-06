@@ -420,6 +420,11 @@ struct spa {
 	int		spa_waiters;		/* number of waiting threads */
 	boolean_t	spa_waiters_cancel;	/* waiters should return */
 
+	uint64_t	spa_dedup_max_entries;	/* Maximum entries in DDT */
+	uint64_t	spa_dedup_max_size;	/* Target maximum size of DDT */
+	uint64_t	spa_dedup_entries;	/* Current entries in DDT */
+	uint64_t	spa_dedup_entry_size;	/* Average size of DDT entry */
+
 	/*
 	 * spa_refcount & spa_config_lock must be the last elements
 	 * because zfs_refcount_t changes size based on compilation options.
