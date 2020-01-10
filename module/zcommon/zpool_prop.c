@@ -101,6 +101,11 @@ zpool_prop_init(void)
 	    PROP_READONLY, ZFS_TYPE_POOL, "<1.00x or higher if deduped>",
 	    "DEDUP");
 
+	zprop_register_number(ZPOOL_PROP_DEDUP_SIZE, "dedupsize", 0,
+	    PROP_READONLY, ZFS_TYPE_POOL, "", "DEDUPSIZE");
+	zprop_register_number(ZPOOL_PROP_DEDUP_ENTRY_SIZE, "dedupentrysize",
+	    0, PROP_READONLY, ZFS_TYPE_POOL, "", "DEDUPENTRYSIE");
+
 	/* default number properties */
 	zprop_register_number(ZPOOL_PROP_VERSION, "version", SPA_VERSION,
 	    PROP_DEFAULT, ZFS_TYPE_POOL, "<version>", "VERSION");
