@@ -3736,6 +3736,10 @@ spa_ld_get_props(spa_t *spa)
 		spa_prop_find(spa, ZPOOL_PROP_DEDUPDITTO,
 		    &spa->spa_dedup_ditto);
 		spa_prop_find(spa, ZPOOL_PROP_AUTOTRIM, &spa->spa_autotrim);
+		spa_prop_find(spa, ZPOOL_PROP_DEDUP_SIZE,
+		    &spa->spa_dedup_size);
+		spa_prop_find(spa, ZPOOL_PROP_DEDUP_ENTRY_SIZE,
+		    &spa->spa_dedup_entry_size);
 		spa->spa_autoreplace = (autoreplace != 0);
 	}
 

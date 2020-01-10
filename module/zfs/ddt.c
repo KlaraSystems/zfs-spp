@@ -961,9 +961,9 @@ ddt_load(spa_t *spa)
 	}
 
 	ddt_get_dedup_object_stats(spa, &ddo_total);
-	spa->spa_dedup_size = ddo_total.ddo_dspace * ddo_total.ddo_count;
+	spa->spa_dedup_size = ddo_total.ddo_mspace * ddo_total.ddo_count;
 	if (ddo_total.ddo_dspace > 0)
-		spa->spa_dedup_entry_size = ddo_total.ddo_dspace;
+		spa->spa_dedup_entry_size = ddo_total.ddo_mspace;
 
 	return (0);
 }
@@ -1365,9 +1365,9 @@ ddt_sync(spa_t *spa, uint64_t txg)
 	scn->scn_zio_root = rio;
 
 	ddt_get_dedup_object_stats(spa, &ddo_total);
-	spa->spa_dedup_size = ddo_total.ddo_dspace * ddo_total.ddo_count;
-	if (ddo_total.ddo_dspace > spa->spa_dedup_entry_size)
-		spa->spa_dedup_entry_size = ddo_total.ddo_dspace;
+	spa->spa_dedup_size = ddo_total.ddo_mspace * ddo_total.ddo_count;
+	if (ddo_total.ddo_mspace > spa->spa_dedup_entry_size)
+		spa->spa_dedup_entry_size = ddo_total.ddo_mspace;
 
 	for (enum zio_checksum c = 0; c < ZIO_CHECKSUM_FUNCTIONS; c++) {
 		ddt_t *ddt = spa->spa_ddt[c];
