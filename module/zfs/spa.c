@@ -351,6 +351,10 @@ spa_prop_get_config(spa_t *spa, nvlist_t **nvp)
 
 		spa_prop_add_list(*nvp, ZPOOL_PROP_DEDUPRATIO, NULL,
 		    ddt_get_pool_dedup_ratio(spa), src);
+		spa_prop_add_list(*nvp, ZPOOL_PROP_DEDUP_SIZE, NULL,
+		    spa->spa_dedup_size, src);
+		spa_prop_add_list(*nvp, ZPOOL_PROP_DEDUP_ENTRY_SIZE, NULL,
+		    spa->spa_dedup_entry_size, src);
 
 		spa_prop_add_list(*nvp, ZPOOL_PROP_HEALTH, NULL,
 		    rvd->vdev_state, src);
@@ -3784,10 +3788,6 @@ spa_ld_get_props(spa_t *spa)
 		spa_prop_find(spa, ZPOOL_PROP_DEDUPDITTO,
 		    &spa->spa_dedup_ditto);
 		spa_prop_find(spa, ZPOOL_PROP_AUTOTRIM, &spa->spa_autotrim);
-		spa_prop_find(spa, ZPOOL_PROP_DEDUP_SIZE,
-		    &spa->spa_dedup_size);
-		spa_prop_find(spa, ZPOOL_PROP_DEDUP_ENTRY_SIZE,
-		    &spa->spa_dedup_entry_size);
 		spa->spa_autoreplace = (autoreplace != 0);
 	}
 
