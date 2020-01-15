@@ -3265,9 +3265,10 @@ zio_ddt_write(zio_t *zio)
 	ddt_enter(ddt);
 	if (spa->spa_dedup_limit && spa->spa_dedup_size +
 	    spa->spa_dedup_entry_size > spa->spa_dedup_limit) {
-		dde = ddt_lookup(ddt, bp, B_FALSE, NULL);
+		/* Over the desired DDT size, set 'nogrow' flag */
+		dde = ddt_lookup(ddt, bp, B_TRUE, B_TRUE, NULL);
 	} else {
-		dde = ddt_lookup(ddt, bp, B_TRUE, &added);
+		dde = ddt_lookup(ddt, bp, B_TRUE, B_FALSE, &added);
 	}
 	if (dde == NULL) {
 #if defined(_KERNEL) && defined(ZFS_DEBUG)
@@ -3402,7 +3403,7 @@ zio_ddt_free(zio_t *zio)
 	ASSERT(zio->io_child_type == ZIO_CHILD_LOGICAL);
 
 	ddt_enter(ddt);
-	freedde = dde = ddt_lookup(ddt, bp, B_TRUE, &added);
+	freedde = dde = ddt_lookup(ddt, bp, B_TRUE, B_FALSE, &added);
 	if (dde) {
 		ddp = ddt_phys_select(dde, bp);
 	}
