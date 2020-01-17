@@ -1420,7 +1420,7 @@ ddt_sync(spa_t *spa, uint64_t txg)
 	ddt_get_dedup_object_stats(spa, &ddo_total);
 	spa->spa_dedup_size = ddo_total.ddo_mspace * ddo_total.ddo_count;
 	if (ddo_total.ddo_count < 1000) {
-		spa->spa_dedup_entry_size = MIN(spa->spa_dedup_size / 1000, 1);
+		spa->spa_dedup_entry_size = MAX(spa->spa_dedup_size / 1000, 1);
 	} else {
 		spa->spa_dedup_entry_size = ddo_total.ddo_mspace;
 	}
