@@ -993,7 +993,11 @@ ddt_load(spa_t *spa)
 
 	ddt_get_dedup_object_stats(spa, &ddo_total);
 	spa->spa_dedup_size = ddo_total.ddo_mspace * ddo_total.ddo_count;
-	spa->spa_dedup_entry_size = ddo_total.ddo_mspace;
+	if (ddo_total.ddo_count < 1000) {
+		spa->spa_dedup_entry_size = MIN(spa->spa_dedup_size / 1000, 1);
+	} else {
+		spa->spa_dedup_entry_size = ddo_total.ddo_mspace;
+	}
 
 	return (0);
 }
@@ -1415,7 +1419,11 @@ ddt_sync(spa_t *spa, uint64_t txg)
 
 	ddt_get_dedup_object_stats(spa, &ddo_total);
 	spa->spa_dedup_size = ddo_total.ddo_mspace * ddo_total.ddo_count;
-	spa->spa_dedup_entry_size = ddo_total.ddo_mspace;
+	if (ddo_total.ddo_count < 1000) {
+		spa->spa_dedup_entry_size = MIN(spa->spa_dedup_size / 1000, 1);
+	} else {
+		spa->spa_dedup_entry_size = ddo_total.ddo_mspace;
+	}
 
 	for (enum zio_checksum c = 0; c < ZIO_CHECKSUM_FUNCTIONS; c++) {
 		ddt_t *ddt = spa->spa_ddt[c];
