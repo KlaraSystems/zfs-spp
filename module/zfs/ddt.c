@@ -995,6 +995,7 @@ ddt_load(spa_t *spa)
 	spa->spa_dedup_size = ddo_total.ddo_mspace * ddo_total.ddo_count;
 	if (ddo_total.ddo_count < 1000) {
 		spa->spa_dedup_entry_size = MAX(spa->spa_dedup_size / 1000, 1);
+		spa->spa_dedup_size = spa->spa_dedup_entry_size * ddo_total.ddo_count;
 	} else {
 		spa->spa_dedup_entry_size = ddo_total.ddo_mspace;
 	}
@@ -1421,6 +1422,7 @@ ddt_sync(spa_t *spa, uint64_t txg)
 	spa->spa_dedup_size = ddo_total.ddo_mspace * ddo_total.ddo_count;
 	if (ddo_total.ddo_count < 1000) {
 		spa->spa_dedup_entry_size = MAX(spa->spa_dedup_size / 1000, 1);
+		spa->spa_dedup_size = spa->spa_dedup_entry_size * ddo_total.ddo_count;
 	} else {
 		spa->spa_dedup_entry_size = ddo_total.ddo_mspace;
 	}
