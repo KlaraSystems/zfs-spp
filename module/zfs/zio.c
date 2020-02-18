@@ -3263,8 +3263,8 @@ zio_ddt_write(zio_t *zio)
 	ASSERT(!(zio->io_bp_override && (zio->io_flags & ZIO_FLAG_RAW)));
 
 	ddt_enter(ddt);
-	if (spa->spa_dedup_limit && spa->spa_dedup_size +
-	    spa->spa_dedup_entry_size > spa->spa_dedup_limit) {
+	if (spa->spa_dedup_entrymax &&
+	    spa->spa_dedup_entries >= spa->spa_dedup_entrymax) {
 		/* Over the desired DDT size, set 'nogrow' flag */
 		dde = ddt_lookup(ddt, bp, B_TRUE, B_TRUE, NULL);
 	} else {
@@ -3273,8 +3273,8 @@ zio_ddt_write(zio_t *zio)
 	if (dde == NULL) {
 #if defined(_KERNEL) && defined(ZFS_DEBUG)
 		__dprintf(B_TRUE, __FILE__, __FUNCTION__, __LINE__,
-		    "At ddt_size %zu of %zu, txg = %lu\n", spa->spa_dedup_size,
-		    spa->spa_dedup_limit, txg);
+		    "At ddt entries %zu of %zu, txg = %lu\n", spa->spa_dedup_entries,
+		    spa->spa_dedup_entrymax, txg);
 #endif
 		zp->zp_dedup = B_FALSE;
 		BP_SET_DEDUP(bp, B_FALSE);
@@ -3289,11 +3289,11 @@ zio_ddt_write(zio_t *zio)
 	if (added) {
 #if defined(_KERNEL) && defined(ZFS_DEBUG)
 		__dprintf(B_TRUE, __FILE__, __FUNCTION__, __LINE__,
-			  "Increasing DDT size from %zu to %zu\n",
-			spa->spa_dedup_size,
-			spa->spa_dedup_size + spa->spa_dedup_entry_size);
+			  "Increasing DDT entries from %zu to %zu\n",
+			spa->spa_dedup_entries,
+			spa->spa_dedup_entries + 1);
 #endif
-		spa->spa_dedup_size += spa->spa_dedup_entry_size;
+		spa->spa_dedup_entries++;
 	}
 
 	if (zp->zp_dedup_verify && zio_ddt_collision(zio, ddt, dde)) {

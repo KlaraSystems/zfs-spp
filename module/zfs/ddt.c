@@ -836,6 +836,7 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add, boolean_t nogrow,
 
 	if (error == ENOENT && nogrow == B_TRUE) {
 		avl_remove(&ddt->ddt_tree, dde);
+		dde->dde_loading = B_FALSE;
 		ddt_free(dde);
 		return (NULL);
 	}
@@ -992,13 +993,8 @@ ddt_load(spa_t *spa)
 	}
 
 	ddt_get_dedup_object_stats(spa, &ddo_total);
-	spa->spa_dedup_size = ddo_total.ddo_mspace * ddo_total.ddo_count;
-	if (ddo_total.ddo_count < 1000) {
-		spa->spa_dedup_entry_size = MIN(ddo_total.ddo_mspace, MAX(spa->spa_dedup_size / 1000, 1));
-		spa->spa_dedup_size = spa->spa_dedup_entry_size * ddo_total.ddo_count;
-	} else {
-		spa->spa_dedup_entry_size = ddo_total.ddo_mspace;
-	}
+	spa->spa_dedup_entries = ddo_total.ddo_count;
+	spa->spa_dedup_entry_size = ddo_total.ddo_mspace;
 
 	return (0);
 }
@@ -1419,13 +1415,8 @@ ddt_sync(spa_t *spa, uint64_t txg)
 	scn->scn_zio_root = rio;
 
 	ddt_get_dedup_object_stats(spa, &ddo_total);
-	spa->spa_dedup_size = ddo_total.ddo_mspace * ddo_total.ddo_count;
-	if (ddo_total.ddo_count < 1000) {
-		spa->spa_dedup_entry_size = MIN(ddo_total.ddo_mspace, MAX(spa->spa_dedup_size / 1000, 1));
-		spa->spa_dedup_size = spa->spa_dedup_entry_size * ddo_total.ddo_count;
-	} else {
-		spa->spa_dedup_entry_size = ddo_total.ddo_mspace;
-	}
+	spa->spa_dedup_entries = ddo_total.ddo_count;
+	spa->spa_dedup_entry_size = ddo_total.ddo_mspace;
 
 	for (enum zio_checksum c = 0; c < ZIO_CHECKSUM_FUNCTIONS; c++) {
 		ddt_t *ddt = spa->spa_ddt[c];
