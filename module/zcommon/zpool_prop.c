@@ -113,9 +113,9 @@ zpool_prop_init(void)
 	    PROP_DEFAULT, ZFS_TYPE_POOL, "<threshold (min 100)>", "DEDUPDITTO");
 	zprop_register_number(ZPOOL_PROP_ASHIFT, "ashift", 0, PROP_DEFAULT,
 	    ZFS_TYPE_POOL, "<ashift, 9-16, or 0=default>", "ASHIFT");
-	zprop_register_number(ZPOOL_PROP_DEDUP_SIZEMAX, "dedupsizemax", 0,
+	zprop_register_number(ZPOOL_PROP_DEDUP_MAX_SIZE, "dedupsizemax", 0,
 	    PROP_DEFAULT, ZFS_TYPE_POOL, "<size>", "DEDUPSIZEMAX");
-	zprop_register_number(ZPOOL_PROP_DEDUP_ENTRYMAX, "dedupentrymax", 0,
+	zprop_register_number(ZPOOL_PROP_DEDUP_MAX_ENTRIES, "dedupentrymax", 0,
 	    PROP_DEFAULT, ZFS_TYPE_POOL, "<numobjects>", "DEDUPENTRYMAX");
 
 	/* default index (boolean) properties */

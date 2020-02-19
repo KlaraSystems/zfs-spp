@@ -409,8 +409,8 @@ struct spa {
 	uint64_t	spa_leaf_list_gen;	/* track leaf_list changes */
 	uint32_t	spa_hostid;		/* cached system hostid */
 
-	uint64_t	spa_dedup_sizemax;	/* Target maximum size of DDT */
-	uint64_t	spa_dedup_entrymax;	/* Maximum entries in DDT */
+	uint64_t	spa_dedup_max_entries;	/* Maximum entries in DDT */
+	uint64_t	spa_dedup_max_size;	/* Target maximum size of DDT */
 	uint64_t	spa_dedup_entries;	/* Current entries in DDT */
 	uint64_t	spa_dedup_entry_size;	/* Average size of DDT entry */
 
