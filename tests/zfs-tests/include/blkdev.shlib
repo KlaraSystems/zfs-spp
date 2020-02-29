@@ -87,12 +87,12 @@ function block_device_wait
 		for (( i = 0; i < 5; ++i )); do
 			typeset missing=false
 			for dev in "${@}"; do
-				if ![[ -f $dev ]]; then
+				if ! [[ -f $dev ]]; then
 					missing=true
 					break
 				fi
 			done
-			if !$missing; then
+			if ! $missing; then
 				break
 			fi
 			sleep ${#@}
