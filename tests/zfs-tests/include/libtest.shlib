@@ -612,8 +612,8 @@ function default_cleanup_noexit
 				then
 					destroy_pool $pool
 				fi
-				ALL_POOLS=$(get_all_pools)
 			done
+			ALL_POOLS=$(get_all_pools)
 		done
 
 		zfs mount -a
