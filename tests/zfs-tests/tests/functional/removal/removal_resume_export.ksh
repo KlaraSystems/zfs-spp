@@ -64,6 +64,8 @@ function callback
 	# Let the removal finish.
 	#
 	log_must zinject -c all
+
+	return 0
 }
 
 log_onexit cleanup
