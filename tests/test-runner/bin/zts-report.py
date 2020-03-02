@@ -125,7 +125,7 @@ trim_reason = 'DISKS must support discard (TRIM/UNMAP)'
 # in the manor required by Linux.  Any tests which are skipped for this
 # reason will be suppressed in the final analysis output.
 #
-na_reason = "N/A on Linux"
+na_reason = "Not applicable"
 
 summary = {
     'total': float(0),
@@ -157,6 +157,13 @@ known = {
     'rsend/rsend_008_pos': ['SKIP', '6066'],
     'vdev_zaps/vdev_zaps_007_pos': ['FAIL', known_reason],
 }
+
+if sys.platform.startswith('freebsd'):
+    known.update({
+        'link_count/link_count_001': ['SKIP', na_reason],
+        'removal/removal_condense_export': ['FAIL', known_reason],
+        'upgrade/upgrade_userobj_001_pos': ['FAIL', known_reason],
+    })
 
 #
 # These tests may occasionally fail or be skipped.  We want there failures
