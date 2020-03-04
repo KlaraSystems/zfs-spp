@@ -8529,6 +8529,26 @@ spa_sync_props(void *arg, dmu_tx_t *tx)
 				    1, strlen(strval) + 1, strval, tx));
 				spa_history_log_internal(spa, "set", tx,
 				    "%s=%s", nvpair_name(elem), strval);
+			} else if (prop == ZPOOL_PROP_DEDUP_MAX_SIZE) {
+				/* This is not a stored property */
+				intval = fnvpair_value_uint64(elem);
+				spa->spa_dedup_max_entries = intval /
+				    ddt_entry_size();
+				spa->spa_dedup_max_size = intval;
+
+				prop = ZPOOL_PROP_DEDUP_MAX_ENTRIES;
+				propname = zpool_prop_to_name(prop);
+				proptype = zpool_prop_get_type(prop);
+				intval = spa->spa_dedup_max_entries;
+
+				VERIFY0(zap_update(mos,
+				    spa->spa_pool_props_object, propname,
+				    8, 1, &intval, tx));
+				intval = fnvpair_value_uint64(elem);
+				spa_history_log_internal(spa, "set", tx,
+				    "%s=%lld", nvpair_name(elem),
+				    (longlong_t)intval);
+				continue;
 			} else if (nvpair_type(elem) == DATA_TYPE_UINT64) {
 				intval = fnvpair_value_uint64(elem);
 
@@ -8570,11 +8590,6 @@ spa_sync_props(void *arg, dmu_tx_t *tx)
 				break;
 			case ZPOOL_PROP_MULTIHOST:
 				spa->spa_multihost = intval;
-				break;
-			case ZPOOL_PROP_DEDUP_MAX_SIZE:
-				spa->spa_dedup_max_entries = intval /
-				    ddt_entry_size();
-				spa->spa_dedup_max_size = intval;
 				break;
 			case ZPOOL_PROP_DEDUP_MAX_ENTRIES:
 				spa->spa_dedup_max_entries = intval;
