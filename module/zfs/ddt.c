@@ -427,7 +427,7 @@ ddt_stat_add(ddt_stat_t *dst, const ddt_stat_t *src, uint64_t neg)
 		*d++ += (*s++ ^ neg) - neg;
 }
 
-static void
+void
 ddt_stat_update(ddt_t *ddt, ddt_entry_t *dde, uint64_t neg)
 {
 	ddt_stat_t dds;
