@@ -253,6 +253,10 @@ extern int ddt_object_update(ddt_t *ddt, enum ddt_type type,
 
 extern const ddt_ops_t ddt_zap_ops;
 
+int ddt_entry_size(void) {
+	return (sizeof (struct ddt_entry));
+}
+
 #ifdef	__cplusplus
 }
 #endif

@@ -326,6 +326,8 @@ spa_prop_get_config(spa_t *spa, nvlist_t **nvp)
 
 		spa_prop_add_list(*nvp, ZPOOL_PROP_DEDUPRATIO, NULL,
 		    ddt_get_pool_dedup_ratio(spa), src);
+		spa_prop_add_list(*nvp, ZPOOL_PROP_DEDUP_MAX_SIZE, NULL,
+		    spa->spa_dedup_max_size, src);
 		spa_prop_add_list(*nvp, ZPOOL_PROP_DEDUP_ENTRIES, NULL,
 		    spa->spa_dedup_entries, src);
 		spa_prop_add_list(*nvp, ZPOOL_PROP_DEDUP_ENTRY_SIZE, NULL,
@@ -4104,7 +4106,6 @@ spa_ld_get_props(spa_t *spa)
 		spa_prop_find(spa, ZPOOL_PROP_DELEGATION, &spa->spa_delegation);
 		spa_prop_find(spa, ZPOOL_PROP_FAILUREMODE, &spa->spa_failmode);
 		spa_prop_find(spa, ZPOOL_PROP_AUTOEXPAND, &spa->spa_autoexpand);
-		spa_prop_find(spa, ZPOOL_PROP_DEDUP_MAX_SIZE, &spa->spa_dedup_max_size);
 		spa_prop_find(spa, ZPOOL_PROP_DEDUP_MAX_ENTRIES, &spa->spa_dedup_max_entries);
 		spa_prop_find(spa, ZPOOL_PROP_MULTIHOST, &spa->spa_multihost);
 		spa_prop_find(spa, ZPOOL_PROP_AUTOTRIM, &spa->spa_autotrim);
@@ -8570,12 +8571,14 @@ spa_sync_props(void *arg, dmu_tx_t *tx)
 				spa->spa_multihost = intval;
 				break;
 			case ZPOOL_PROP_DEDUP_MAX_SIZE:
+				spa->spa_dedup_max_entries = intval /
+				    ddt_entry_size();
 				spa->spa_dedup_max_size = intval;
-				spa->spa_dedup_max_entries = intval / 320;
 				break;
 			case ZPOOL_PROP_DEDUP_MAX_ENTRIES:
 				spa->spa_dedup_max_entries = intval;
-				spa->spa_dedup_max_size = intval * 320;
+				spa->spa_dedup_max_size = intval *
+				    ddt_entry_size();
 				break;
 			default:
 				break;
