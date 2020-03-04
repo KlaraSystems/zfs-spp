@@ -8569,9 +8569,6 @@ spa_sync_props(void *arg, dmu_tx_t *tx)
 			case ZPOOL_PROP_MULTIHOST:
 				spa->spa_multihost = intval;
 				break;
-			case ZPOOL_PROP_DEDUPDITTO:
-				spa->spa_dedup_ditto = intval;
-				break;
 			case ZPOOL_PROP_DEDUP_MAX_SIZE:
 				spa->spa_dedup_max_size = intval;
 				spa->spa_dedup_max_entries = intval / 320;
