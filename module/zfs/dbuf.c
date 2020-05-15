@@ -2056,8 +2056,8 @@ dbuf_dirty(dmu_buf_impl_t *db, dmu_tx_t *tx)
 					cmn_err(CE_WARN, "NULL dbuf buf! db=%p db_buf=%p", db, db->db_buf);
 				} else {
 					arc_release(db->db_buf, db);
+					dbuf_fix_old_data(db, tx->tx_txg);
 				}
-				dbuf_fix_old_data(db, tx->tx_txg);
 				data_old = db->db_buf;
 			}
 			ASSERT(data_old != NULL);
@@ -2298,6 +2298,9 @@ dmu_buf_will_dirty_impl(dmu_buf_t *db_fake, int flags, dmu_tx_t *tx)
 	if (db == NULL) {
 		cmn_err(CE_WARN, "dmu_buf_will_dirty_impl() NULL dbuf! db=%p", db);
 		return;
+	} else if (db->db_data == NULL) {
+		cmn_err(CE_WARN, "dmu_buf_will_dirty_impl() NULL dbuf_data! db=%p", db);
+		return;
 	}
 
 	ASSERT(tx->tx_txg != 0);
@@ -2377,6 +2380,9 @@ dmu_buf_will_fill(dmu_buf_t *db_fake, dmu_tx_t *tx)
 
 	if (db == NULL) {
 		cmn_err(CE_WARN, "dmu_buf_will_fill() NULL dbuf! db=%p", db);
+		return;
+	} else if (db->db_data == NULL) {
+		cmn_err(CE_WARN, "dmu_buf_will_fill() NULL dbuf_data! db=%p", db);
 		return;
 	}
 
